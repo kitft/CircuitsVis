@@ -1,8 +1,9 @@
 """Helper functions to build visualizations using HTML/web frameworks."""
+import os
 import shutil
 import subprocess
-import os
 from pathlib import Path
+from typing import Optional, Union
 from urllib import request
 from uuid import uuid4
 
@@ -129,7 +130,11 @@ def bundle_source(dev_mode: bool = True) -> None:
     shutil.copytree(react_dist, python_dist)
 
 
-def render_local(react_element_name: str, **kwargs) -> str:
+def render_local(
+    react_element_name: str,
+    height: Optional[Union[int, str]] = None,
+    **kwargs
+) -> str:
     """Render (using local JavaScript files)"""
     # Create a random ID for the div (that we render into)
     # This is done to avoid name clashes on a page with many rendered
@@ -138,6 +143,15 @@ def render_local(react_element_name: str, **kwargs) -> str:
 
     # Stringify keyword args
     props = convert_props(kwargs)
+
+    # --- Add Height Styling --- 
+    default_height_css = "height: 600px; overflow: auto;"
+    if height is not None:
+        height_str = f"{height}px" if isinstance(height, int) else str(height)
+        container_style = f"height: {height_str}; overflow: auto;"
+    else:
+        container_style = default_height_css
+    # --- End Height Styling --- 
 
     # Build if in dev mode
     if is_in_dev_mode():
@@ -151,7 +165,8 @@ def render_local(react_element_name: str, **kwargs) -> str:
         # Remove any closing script tags (as this breaks inline code)
         inline_js = inline_js.replace("</script>", "")
 
-    html = f"""<div id="{uuid}" style="margin: 15px 0;"/>
+    # Apply height style to container div
+    html = f"""<div id="{uuid}" style="margin: 15px 0; {container_style}"/>
     <script crossorigin type="module">
     {inline_js}
     
@@ -165,7 +180,11 @@ def render_local(react_element_name: str, **kwargs) -> str:
     return html
 
 
-def render_cdn(react_element_name: str, **kwargs: PythonProperty) -> str:
+def render_cdn(
+    react_element_name: str,
+    height: Optional[Union[int, str]] = None,
+    **kwargs: PythonProperty
+) -> str:
     """Render (from the CDN)
 
     Args:
@@ -181,8 +200,18 @@ def render_cdn(react_element_name: str, **kwargs: PythonProperty) -> str:
 
     # Stringify keyword args
     props = convert_props(kwargs)
+    
+    # --- Add Height Styling --- 
+    default_height_css = "height: 600px; overflow: auto;"
+    if height is not None:
+        height_str = f"{height}px" if isinstance(height, int) else str(height)
+        container_style = f"height: {height_str}; overflow: auto;"
+    else:
+        container_style = default_height_css
+    # --- End Height Styling ---
 
-    html = f"""<div id="{uuid}" style="margin: 15px 0;"/>
+    # Apply height style to container div
+    html = f"""<div id="{uuid}" style="margin: 15px 0; {container_style}"/>
     <script crossorigin type="module">
     import {"{ render, "+ react_element_name + " }"} from "https://unpkg.com/circuitsvis@{circuitsvis.__version__}/dist/cdn/esm.js";
     render(
@@ -197,6 +226,7 @@ def render_cdn(react_element_name: str, **kwargs: PythonProperty) -> str:
 
 def render(
     react_element_name: str,
+    height: Optional[Union[int, str]] = None,
     **kwargs: PythonProperty
 ) -> RenderedHTML:
     """Render a visualization to HTML
@@ -206,11 +236,12 @@ def render(
 
     Args:
         react_element_name (str): Visualization element name from React codebase
+        height: Optional height for the container div (e.g., 500, "70vh").
         use this if directly developing this library). Defaults to False.
 
     Returns:
         Html: HTML for the visualization
     """
-    local_src = render_local(react_element_name, **kwargs)
-    cdn_src = render_cdn(react_element_name, **kwargs)
+    local_src = render_local(react_element_name, height=height, **kwargs)
+    cdn_src = render_cdn(react_element_name, height=height, **kwargs)
     return RenderedHTML(local_src, cdn_src)
