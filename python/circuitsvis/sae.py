@@ -19,7 +19,7 @@ def sae_vis(
     initial_ranking_metric: str = "max", # Options: "max", "l1", "l0" (approx)
     activation_threshold: Optional[float] = None,
     color_map: str = "reds", # Changed default colormap
-    height: Optional[Union[int, str]] = None,
+    height: Optional[Union[int, str]] = "auto",
 ) -> RenderedHTML:
     """
     Visualizes Sparse Autoencoder (SAE) feature activations on a text sequence.
@@ -47,7 +47,7 @@ def sae_vis(
         color_map: Name of the color map to use for visualizing activation
             strength on tokens (e.g., 'reds', 'blues', 'viridis', 'coolwarm'). Defaults to "reds".
         height: Desired height of the visualization container in CSS units (e.g.,
-            500 for pixels, "80vh", "auto"). If None, a default height (e.g., 600px)
+            500 for pixels, "80vh", "auto"). If None, a default height (e.g., auto)
             with vertical scrolling will be used. Defaults to None.
 
     Returns:

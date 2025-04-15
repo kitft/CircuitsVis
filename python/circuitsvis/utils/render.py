@@ -128,8 +128,6 @@ def bundle_source(dev_mode: bool = True) -> None:
         # the destination directory first
         shutil.rmtree(python_dist)
     shutil.copytree(react_dist, python_dist)
-
-
 def render_local(
     react_element_name: str,
     height: Optional[Union[int, str]] = None,
@@ -145,10 +143,10 @@ def render_local(
     props = convert_props(kwargs)
 
     # --- Add Height Styling --- 
-    default_height_css = "height: 600px; overflow: auto;"
+    default_height_css = "height: 900px;"
     if height is not None:
         height_str = f"{height}px" if isinstance(height, int) else str(height)
-        container_style = f"height: {height_str}; overflow: auto;"
+        container_style = f"height: {height_str};"
     else:
         container_style = default_height_css
     # --- End Height Styling --- 
@@ -165,8 +163,10 @@ def render_local(
         # Remove any closing script tags (as this breaks inline code)
         inline_js = inline_js.replace("</script>", "")
 
-    # Apply height style to container div
-    html = f"""<div id="{uuid}" style="margin: 15px 0; {container_style}"/>
+    # Create a wrapper div with overflow visible to allow tooltips to extend beyond
+    # and add extra bottom margin for tooltips
+    html = f"""<div style="overflow: visible; margin-bottom: 300px;">
+    <div id="{uuid}" style="margin: 15px 0; {container_style} overflow: auto;"/>
     <script crossorigin type="module">
     {inline_js}
     
@@ -175,7 +175,8 @@ def render_local(
       CircuitsVis.{react_element_name},
       {props}
     )
-    </script>"""
+    </script>
+    </div>"""
 
     return html
 
@@ -202,16 +203,18 @@ def render_cdn(
     props = convert_props(kwargs)
     
     # --- Add Height Styling --- 
-    default_height_css = "height: 600px; overflow: auto;"
+    default_height_css = "height: 900px;"
     if height is not None:
         height_str = f"{height}px" if isinstance(height, int) else str(height)
-        container_style = f"height: {height_str}; overflow: auto;"
+        container_style = f"height: {height_str};"
     else:
         container_style = default_height_css
     # --- End Height Styling ---
 
-    # Apply height style to container div
-    html = f"""<div id="{uuid}" style="margin: 15px 0; {container_style}"/>
+    # Create a wrapper div with overflow visible to allow tooltips to extend beyond
+    # and add extra bottom margin for tooltips
+    html = f"""<div style="overflow: visible; margin-bottom: 300px;">
+    <div id="{uuid}" style="margin: 15px 0; {container_style} overflow: auto;"/>
     <script crossorigin type="module">
     import {"{ render, "+ react_element_name + " }"} from "https://unpkg.com/circuitsvis@{circuitsvis.__version__}/dist/cdn/esm.js";
     render(
@@ -219,7 +222,8 @@ def render_cdn(
       {react_element_name},
       {props}
     )
-    </script>"""
+    </script>
+    </div>"""
 
     return html
 
