@@ -36,7 +36,7 @@ function getLuminance(hexColorInput: string): number {
 // Add custom Claude Oranges interpolator
 const claudeOrangeInterpolator = scaleLinear<string>()
   .domain([0, 0.5, 1]) // Domain points for the colors
-  .range(["#ffcc99", "#ff9966", "#ff6633"]) // Light to dark orange
+  .range(["#ffffff", "#ff9966", "#ff6633"]) // White at zero, then orange to dark orange
   .clamp(true); // Clamp values outside 0-1
 
 // Consolidated clamping function for all color scales
@@ -482,13 +482,13 @@ const getStyles = (
       margin: "-1px -1px 0 -1px", // Negative margin to pull tokens closer together
       borderRadius: "2px",
       cursor: "pointer",
-      whiteSpace: "pre", // Preserve spaces within tokens
+      whiteSpace: "pre", // Preserve all whitespace exactly
       border: "1px solid transparent",
       transition: "outline 0.1s ease-in-out, background-color 0.1s ease-in-out",
-      letterSpacing: "0.08em", // Increased letter spacing for better readability
-      display: "inline-block",
+      letterSpacing: "0.08em", // Restore original letter spacing
+      display: "inline-block", // Restore inline-block for layout
       position: "relative",
-      verticalAlign: "middle",
+      verticalAlign: "middle", // Restore vertical alignment
       lineHeight: 1.2,
       overflow: "visible"
     },
@@ -2527,12 +2527,11 @@ export const SaeVis: React.FC<SaeVisProps> = ({
                 >
                   {backgroundSegments}
                 </div>
+                {/* Render token text directly, replacing newline chars */}
                 <span
                   style={{ ...styles.tokenTextOverlay, position: "relative" }}
                 >
-                  {typeof token === "string"
-                    ? token.replace(/\n/g, " ") // Only replace newlines with spaces
-                    : token}
+                  {typeof token === "string" ? token.replace(/\n/g, "↵") : ""}
                 </span>
               </span>
             );
@@ -2646,8 +2645,9 @@ export const SaeVis: React.FC<SaeVisProps> = ({
                 token.includes("\n") ? token.replace(/\n/g, "↵") : undefined
               }
             >
+              {/* Render innerContent, replacing newline chars if string */}
               {typeof innerContent === "string"
-                ? innerContent.replace(/\n/g, " ") // Only replace newlines with spaces, keep original spacing
+                ? innerContent.replace(/\n/g, "↵")
                 : innerContent}
             </span>
           );
