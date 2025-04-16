@@ -20,6 +20,7 @@ def sae_vis(
     activation_threshold: Optional[float] = None,
     color_map: str = "reds", # Changed default colormap
     height: Optional[Union[int, str]] = "auto",
+    feature_ids: Optional[List[int]] = None,
 ) -> RenderedHTML:
     """
     Visualizes Sparse Autoencoder (SAE) feature activations on a text sequence.
@@ -49,6 +50,8 @@ def sae_vis(
         height: Desired height of the visualization container in CSS units (e.g.,
             500 for pixels, "80vh", "auto"). If None, a default height (e.g., auto)
             with vertical scrolling will be used. Defaults to None.
+        feature_ids: Optional list of IDs for the features. If None, defaults
+            to range(num_features). Defaults to None.
 
     Returns:
         RenderedHTML: An HTML object for interactive visualization in environments
@@ -102,6 +105,10 @@ def sae_vis(
     if initial_ranking_metric not in ["max", "l1", "l0"]:
         raise ValueError("`initial_ranking_metric` must be one of 'max', 'l1', 'l0'.")
 
+    # Set default feature indices if not provided
+    if feature_ids is None:
+        feature_ids = list(range(num_features))
+
     # --- Prepare Props for Rendering ---
     # `render` function handles NumPy/Tensor conversion via `convert_props`
     
@@ -117,4 +124,5 @@ def sae_vis(
         initialRankingMetric=initial_ranking_metric,
         activationThreshold=activation_threshold,
         colorMap=color_map,
+        featureIDs=feature_ids,
     ) 

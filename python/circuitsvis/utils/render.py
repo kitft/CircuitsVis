@@ -166,7 +166,7 @@ def render_local(
     # Create a wrapper div with overflow visible to allow tooltips to extend beyond
     # and add extra bottom margin for tooltips
     html = f"""<div style="overflow: visible; margin-bottom: 300px;">
-    <div id="{uuid}" style="margin: 15px 0; {container_style} overflow: auto;"/>
+    <div id="{uuid}" style="margin: 15px 0; {container_style} overflow: visible;"/>
     <script crossorigin type="module">
     {inline_js}
     
@@ -214,7 +214,7 @@ def render_cdn(
     # Create a wrapper div with overflow visible to allow tooltips to extend beyond
     # and add extra bottom margin for tooltips
     html = f"""<div style="overflow: visible; margin-bottom: 300px;">
-    <div id="{uuid}" style="margin: 15px 0; {container_style} overflow: auto;"/>
+    <div id="{uuid}" style="margin: 15px 0; {container_style} overflow: visible;"/>
     <script crossorigin type="module">
     import {"{ render, "+ react_element_name + " }"} from "https://unpkg.com/circuitsvis@{circuitsvis.__version__}/dist/cdn/esm.js";
     render(
