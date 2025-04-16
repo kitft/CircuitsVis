@@ -2,11 +2,11 @@
 import { scaleLinear, scaleSequential } from "d3-scale";
 import * as chromatic from "d3-scale-chromatic";
 import React, {
-  CSSProperties,
-  useCallback,
-  useMemo,
-  useRef,
-  useState
+    CSSProperties,
+    useCallback,
+    useMemo,
+    useRef,
+    useState
 } from "react";
 
 // --- Helper: Luminance Calculation (Simple) ---
@@ -467,10 +467,8 @@ const getStyles = (
       lineHeight: "1"
     },
     tokenSequence: {
-      display: "flex",
-      flexWrap: "wrap",
-      gap: "0",
-      lineHeight: 1.2,
+      display: "block",
+      lineHeight: 1.5,
       border: `1px solid ${theme.subtleBorder}`,
       padding: "5px",
       marginTop: "10px",
@@ -628,6 +626,10 @@ export const SaeVis: React.FC<SaeVisProps> = ({
   colorMidpoint: propsColorMidpoint
 }) => {
   // --- State ---
+  // Process tokens to replace newlines with arrow symbol
+  const processedTokens = useMemo(() => {
+    return tokens.map((token) => token.replace(/\n/g, "↵"));
+  }, [tokens]);
   const [rankingMetric, setRankingMetric] = useState<"max" | "l1" | "l0">(
     initialRankingMetric
   );
@@ -1311,7 +1313,7 @@ export const SaeVis: React.FC<SaeVisProps> = ({
 
   // --- Rendering ---
 
-  if (!tokens || !featureActivations) {
+  if (!processedTokens || !featureActivations) {
     return <div style={styles.container}>Loading or no data...</div>;
   }
 
@@ -1948,7 +1950,7 @@ export const SaeVis: React.FC<SaeVisProps> = ({
                     <span style={styles.dynamicInfoLabel}>Value at Token </span>
                     {hoveredTokenIndex !== null ? (
                       <span style={{ fontWeight: "bold" }}>
-                        {tokens[hoveredTokenIndex]}
+                        {processedTokens[hoveredTokenIndex]}
                       </span>
                     ) : (
                       "?"
@@ -2106,8 +2108,8 @@ export const SaeVis: React.FC<SaeVisProps> = ({
                   >
                     <span>
                       <strong>T{tokenIndex}:</strong> &quot;
-                      {tokens[tokenIndex].substring(0, 10)}&quot;
-                      {tokens[tokenIndex].length > 10 ? "..." : ""}
+                      {processedTokens[tokenIndex].substring(0, 10)}&quot;
+                      {processedTokens[tokenIndex].length > 10 ? "..." : ""}
                     </span>
 
                     {/* Replace nested ternary with simpler conditionals */}
@@ -2203,7 +2205,8 @@ export const SaeVis: React.FC<SaeVisProps> = ({
                       ×
                     </button>
                     <strong>
-                      Token {tokenIndex}: &quot;{tokens[tokenIndex]}&quot;
+                      Token {tokenIndex}: &quot;{processedTokens[tokenIndex]}
+                      &quot;
                     </strong>
                     <div
                       style={{
@@ -2284,7 +2287,8 @@ export const SaeVis: React.FC<SaeVisProps> = ({
                     ×
                   </button>
                   <strong>
-                    Token {tokenIndex}: &quot;{tokens[tokenIndex]}&quot;
+                    Token {tokenIndex}: &quot;{processedTokens[tokenIndex]}
+                    &quot;
                   </strong>
                   <div
                     style={{
@@ -2422,7 +2426,7 @@ export const SaeVis: React.FC<SaeVisProps> = ({
 
       {/* --- Token Sequence --- */}
       <div style={styles.tokenSequence}>
-        {tokens.map((token, index) => {
+        {processedTokens.map((token, index) => {
           const isHovered = hoveredTokenIndex === index;
           const isClicked = isTokenSelected(index);
           // Use independent multi-color mode flags derived earlier
@@ -2430,6 +2434,10 @@ export const SaeVis: React.FC<SaeVisProps> = ({
           const isMultiMax = isMultiMaximizeMode;
           let tokenStyle: CSSProperties = { ...styles.token };
           let innerContent: React.ReactNode = token;
+
+          // Check for hook right arrow symbols
+          const hasHookRightArrow =
+            typeof token === "string" && /[↵]/.test(token);
 
           // --- Determine Background/Content based on Hover/Selection Priority --- //
 
@@ -2635,21 +2643,23 @@ export const SaeVis: React.FC<SaeVisProps> = ({
           }
 
           return (
-            <span
-              key={index}
-              style={tokenStyle}
-              onMouseEnter={(e) => handleTokenMouseEnter(index, e)}
-              onMouseLeave={handleTokenMouseLeave}
-              onClick={() => handleTokenClick(index)}
-              title={
-                token.includes("\n") ? token.replace(/\n/g, "↵") : undefined
-              }
-            >
-              {/* Render innerContent, replacing newline chars if string */}
-              {typeof innerContent === "string"
-                ? innerContent.replace(/\n/g, "↵")
-                : innerContent}
-            </span>
+            <React.Fragment key={index}>
+              <span
+                style={tokenStyle}
+                onMouseEnter={(e) => handleTokenMouseEnter(index, e)}
+                onMouseLeave={handleTokenMouseLeave}
+                onClick={() => handleTokenClick(index)}
+                title={
+                  token.includes("\n") ? token.replace(/\n/g, "↵") : undefined
+                }
+              >
+                {/* Render innerContent, replacing newline chars if string */}
+                {typeof innerContent === "string"
+                  ? innerContent.replace(/\n/g, "↵")
+                  : innerContent}
+              </span>
+              {hasHookRightArrow && <br />}
+            </React.Fragment>
           );
         })}
       </div>
@@ -2665,7 +2675,7 @@ export const SaeVis: React.FC<SaeVisProps> = ({
         >
           <strong>
             Token {hoverTokenTooltipData.tokenIndex}: &quot;
-            {tokens[hoverTokenTooltipData.tokenIndex]}&quot;
+            {processedTokens[hoverTokenTooltipData.tokenIndex]}&quot;
           </strong>
           {hoverTokenTooltipData.selectedFeatureValue !== null && (
             <div

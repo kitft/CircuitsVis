@@ -1,0 +1,1 @@
+{"version":3,"file":"getTokenBackgroundColor.d.ts","sourceRoot":"","sources":["../../../src/utils/getTokenBackgroundColor.ts"],"names":[],"mappings":"AAAA,OAAO,EAAkB,QAAQ,EAAE,MAAM,EAAE,MAAM,QAAQ,CAAC;AAM1D;;;;GAIG;AACH,wBAAgB,uBAAuB,CACrC,KAAK,EAAE,MAAM,EACb,GAAG,EAAE,MAAM,EACX,GAAG,EAAE,MAAM,EACX,aAAa,GAAE,QAAgB,EAC/B,aAAa,GAAE,QAAiB,GAC/B,MAAM,CAgBR"}

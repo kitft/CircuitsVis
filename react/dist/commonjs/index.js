@@ -1231,10 +1231,8 @@ var getStyles = (mode, claudeModeActive) => {
       lineHeight: "1"
     },
     tokenSequence: {
-      display: "flex",
-      flexWrap: "wrap",
-      gap: "0",
-      lineHeight: 1.2,
+      display: "block",
+      lineHeight: 1.5,
       border: `1px solid ${theme.subtleBorder}`,
       padding: "5px",
       marginTop: "10px",
@@ -1375,6 +1373,9 @@ var SaeVis = ({
   colorMidpoint: propsColorMidpoint
 }) => {
   var _a;
+  const processedTokens = (0, import_react13.useMemo)(() => {
+    return tokens.map((token) => token.replace(/\n/g, "\u21B5"));
+  }, [tokens]);
   const [rankingMetric, setRankingMetric] = (0, import_react13.useState)(
     initialRankingMetric
   );
@@ -1911,7 +1912,7 @@ var SaeVis = ({
     },
     [themes.light.text, themes.dark.text]
   );
-  if (!tokens || !featureActivations) {
+  if (!processedTokens || !featureActivations) {
     return /* @__PURE__ */ import_react13.default.createElement("div", { style: styles.container }, "Loading or no data...");
   }
   const isTokenSelected = (index) => {
@@ -2458,7 +2459,7 @@ Max: ${feature.maxActivation.toPrecision(
           feature.nonZeroCount,
           ")"
         )),
-        /* @__PURE__ */ import_react13.default.createElement("div", { style: { marginTop: "3px" } }, /* @__PURE__ */ import_react13.default.createElement("span", { style: styles.dynamicInfoLabel }, "Value at Token "), hoveredTokenIndex !== null ? /* @__PURE__ */ import_react13.default.createElement("span", { style: { fontWeight: "bold" } }, tokens[hoveredTokenIndex]) : "?", ":", /* @__PURE__ */ import_react13.default.createElement(
+        /* @__PURE__ */ import_react13.default.createElement("div", { style: { marginTop: "3px" } }, /* @__PURE__ */ import_react13.default.createElement("span", { style: styles.dynamicInfoLabel }, "Value at Token "), hoveredTokenIndex !== null ? /* @__PURE__ */ import_react13.default.createElement("span", { style: { fontWeight: "bold" } }, processedTokens[hoveredTokenIndex]) : "?", ":", /* @__PURE__ */ import_react13.default.createElement(
           "span",
           {
             style: {
@@ -2558,7 +2559,7 @@ Max: ${feature.maxActivation.toPrecision(
             key: tokenIndex,
             style: styles.selectedTokenInfoBoxCompactTile
           },
-          /* @__PURE__ */ import_react13.default.createElement("span", null, /* @__PURE__ */ import_react13.default.createElement("strong", null, "T", tokenIndex, ":"), ' "', tokens[tokenIndex].substring(0, 10), '"', tokens[tokenIndex].length > 10 ? "..." : ""),
+          /* @__PURE__ */ import_react13.default.createElement("span", null, /* @__PURE__ */ import_react13.default.createElement("strong", null, "T", tokenIndex, ":"), ' "', processedTokens[tokenIndex].substring(0, 10), '"', processedTokens[tokenIndex].length > 10 ? "..." : ""),
           hoveredFeatureIndex !== null && /* @__PURE__ */ import_react13.default.createElement(
             "span",
             {
@@ -2643,7 +2644,7 @@ Max: ${feature.maxActivation.toPrecision(
             title: "Deselect Token"
           },
           "\xD7"
-        ), /* @__PURE__ */ import_react13.default.createElement("strong", null, "Token ", tokenIndex, ': "', tokens[tokenIndex], '"'), /* @__PURE__ */ import_react13.default.createElement(
+        ), /* @__PURE__ */ import_react13.default.createElement("strong", null, "Token ", tokenIndex, ': "', processedTokens[tokenIndex], '"'), /* @__PURE__ */ import_react13.default.createElement(
           "div",
           {
             style: {
@@ -2701,7 +2702,7 @@ Max: ${feature.maxActivation.toPrecision(
           title: "Deselect Token"
         },
         "\xD7"
-      ), /* @__PURE__ */ import_react13.default.createElement("strong", null, "Token ", tokenIndex, ': "', tokens[tokenIndex], '"'), /* @__PURE__ */ import_react13.default.createElement(
+      ), /* @__PURE__ */ import_react13.default.createElement("strong", null, "Token ", tokenIndex, ': "', processedTokens[tokenIndex], '"'), /* @__PURE__ */ import_react13.default.createElement(
         "div",
         {
           style: {
@@ -2798,7 +2799,7 @@ Max: ${feature.maxActivation.toPrecision(
         )))
       ));
     }))
-  ), /* @__PURE__ */ import_react13.default.createElement("div", { style: styles.tokenSequence }, tokens.map((token, index) => {
+  ), /* @__PURE__ */ import_react13.default.createElement("div", { style: styles.tokenSequence }, processedTokens.map((token, index) => {
     var _a2, _b, _c, _d, _e;
     const isHovered = hoveredTokenIndex === index;
     const isClicked = isTokenSelected(index);
@@ -2806,6 +2807,7 @@ Max: ${feature.maxActivation.toPrecision(
     const isMultiMax = isMultiMaximizeMode;
     let tokenStyle = { ...styles.token };
     let innerContent = token;
+    const hasHookRightArrow = typeof token === "string" && /[↵]/.test(token);
     if (hoveredFeatureIndex !== null) {
       const hoveredArrayIndex = featureIdToArrayIndexMap.get(
         hoveredFeatureIndex != null ? hoveredFeatureIndex : -1
@@ -2957,10 +2959,9 @@ Max: ${feature.maxActivation.toPrecision(
     if (isClicked) {
       tokenStyle = { ...tokenStyle, ...styles.tokenClicked };
     }
-    return /* @__PURE__ */ import_react13.default.createElement(
+    return /* @__PURE__ */ import_react13.default.createElement(import_react13.default.Fragment, { key: index }, /* @__PURE__ */ import_react13.default.createElement(
       "span",
       {
-        key: index,
         style: tokenStyle,
         onMouseEnter: (e) => handleTokenMouseEnter(index, e),
         onMouseLeave: handleTokenMouseLeave,
@@ -2968,7 +2969,7 @@ Max: ${feature.maxActivation.toPrecision(
         title: token.includes("\n") ? token.replace(/\n/g, "\u21B5") : void 0
       },
       typeof innerContent === "string" ? innerContent.replace(/\n/g, "\u21B5") : innerContent
-    );
+    ), hasHookRightArrow && /* @__PURE__ */ import_react13.default.createElement("br", null));
   })), hoverTokenTooltipData && /* @__PURE__ */ import_react13.default.createElement(
     "div",
     {
@@ -2978,7 +2979,7 @@ Max: ${feature.maxActivation.toPrecision(
         top: `${hoverTokenTooltipData.position.y}px`
       }
     },
-    /* @__PURE__ */ import_react13.default.createElement("strong", null, "Token ", hoverTokenTooltipData.tokenIndex, ': "', tokens[hoverTokenTooltipData.tokenIndex], '"'),
+    /* @__PURE__ */ import_react13.default.createElement("strong", null, "Token ", hoverTokenTooltipData.tokenIndex, ': "', processedTokens[hoverTokenTooltipData.tokenIndex], '"'),
     hoverTokenTooltipData.selectedFeatureValue !== null && /* @__PURE__ */ import_react13.default.createElement(
       "div",
       {
