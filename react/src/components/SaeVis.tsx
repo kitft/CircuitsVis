@@ -2,11 +2,11 @@
 import { scaleLinear, scaleSequential } from "d3-scale";
 import * as chromatic from "d3-scale-chromatic";
 import React, {
-    CSSProperties,
-    useCallback,
-    useMemo,
-    useRef,
-    useState
+  CSSProperties,
+  useCallback,
+  useMemo,
+  useRef,
+  useState
 } from "react";
 
 // --- Helper: Luminance Calculation (Simple) ---
@@ -467,6 +467,10 @@ const getStyles = (
       lineHeight: "1"
     },
     tokenSequence: {
+      /*    display: "flex",
+      flexWrap: "wrap",
+      gap: "0",
+      lineHeight: 1.2, */
       display: "block",
       lineHeight: 1.5,
       border: `1px solid ${theme.subtleBorder}`,
@@ -2435,8 +2439,8 @@ export const SaeVis: React.FC<SaeVisProps> = ({
           let tokenStyle: CSSProperties = { ...styles.token };
           let innerContent: React.ReactNode = token;
 
-          // Check for hook right arrow symbols
-          const hasHookRightArrow =
+          // Check for hook left arrow symbols
+          const hasHookLeftArrow =
             typeof token === "string" && /[↵]/.test(token);
 
           // --- Determine Background/Content based on Hover/Selection Priority --- //
@@ -2658,7 +2662,7 @@ export const SaeVis: React.FC<SaeVisProps> = ({
                   ? innerContent.replace(/\n/g, "↵")
                   : innerContent}
               </span>
-              {hasHookRightArrow && <br />}
+              {hasHookLeftArrow && <br />}
             </React.Fragment>
           );
         })}

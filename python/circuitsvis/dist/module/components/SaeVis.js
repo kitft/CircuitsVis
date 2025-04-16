@@ -342,10 +342,12 @@ const getStyles = (mode, claudeModeActive) => {
             lineHeight: "1"
         },
         tokenSequence: {
-            display: "flex",
+            /*    display: "flex",
             flexWrap: "wrap",
             gap: "0",
-            lineHeight: 1.2,
+            lineHeight: 1.2, */
+            display: "block",
+            lineHeight: 1.5,
             border: `1px solid ${theme.subtleBorder}`,
             padding: "5px",
             marginTop: "10px",
@@ -491,6 +493,10 @@ export const SaeVis = ({ tokens, featureActivations, featureLabels, featureIDs, 
 numTopFeaturesPerToken = 5, numTopFeaturesOverall = 20, initialRankingMetric = "max", activationThreshold = null, colorMap = "reds", colorMidpoint: propsColorMidpoint }) => {
     var _a;
     // --- State ---
+    // Process tokens to replace newlines with arrow symbol
+    const processedTokens = useMemo(() => {
+        return tokens.map((token) => token.replace(/\n/g, "↵"));
+    }, [tokens]);
     const [rankingMetric, setRankingMetric] = useState(initialRankingMetric);
     const [currentThreshold, setCurrentThreshold] = useState(activationThreshold);
     const [selectedFeatureIndex, setSelectedFeatureIndex] = useState(null);
@@ -1005,7 +1011,7 @@ numTopFeaturesPerToken = 5, numTopFeaturesOverall = 20, initialRankingMetric = "
         return getLuminance(bgColor) > 0.5 ? themes.light.text : themes.dark.text;
     }, [themes.light.text, themes.dark.text]);
     // --- Rendering ---
-    if (!tokens || !featureActivations) {
+    if (!processedTokens || !featureActivations) {
         return React.createElement("div", { style: styles.container }, "Loading or no data...");
     }
     const isTokenSelected = (index) => {
@@ -1356,7 +1362,7 @@ numTopFeaturesPerToken = 5, numTopFeaturesOverall = 20, initialRankingMetric = "
                                 ")")),
                         React.createElement("div", { style: { marginTop: "3px" } },
                             React.createElement("span", { style: styles.dynamicInfoLabel }, "Value at Token "),
-                            hoveredTokenIndex !== null ? (React.createElement("span", { style: { fontWeight: "bold" } }, tokens[hoveredTokenIndex])) : ("?"),
+                            hoveredTokenIndex !== null ? (React.createElement("span", { style: { fontWeight: "bold" } }, processedTokens[hoveredTokenIndex])) : ("?"),
                             ":",
                             React.createElement("span", { style: {
                                     ...styles.featureValueIndicator,
@@ -1455,9 +1461,9 @@ numTopFeaturesPerToken = 5, numTopFeaturesOverall = 20, initialRankingMetric = "
                                     tokenIndex,
                                     ":"),
                                 " \"",
-                                tokens[tokenIndex].substring(0, 10),
+                                processedTokens[tokenIndex].substring(0, 10),
                                 "\"",
-                                tokens[tokenIndex].length > 10 ? "..." : ""),
+                                processedTokens[tokenIndex].length > 10 ? "..." : ""),
                             hoveredFeatureIndex !== null && (React.createElement("span", { style: {
                                     ...styles.featureValueIndicator,
                                     padding: "0 2px",
@@ -1500,7 +1506,7 @@ numTopFeaturesPerToken = 5, numTopFeaturesOverall = 20, initialRankingMetric = "
                                 "Token ",
                                 tokenIndex,
                                 ": \"",
-                                tokens[tokenIndex],
+                                processedTokens[tokenIndex],
                                 "\""),
                             React.createElement("div", { style: {
                                     marginTop: "5px",
@@ -1539,7 +1545,7 @@ numTopFeaturesPerToken = 5, numTopFeaturesOverall = 20, initialRankingMetric = "
                             "Token ",
                             tokenIndex,
                             ": \"",
-                            tokens[tokenIndex],
+                            processedTokens[tokenIndex],
                             "\""),
                         React.createElement("div", { style: {
                                 marginTop: "3px"
@@ -1592,7 +1598,7 @@ numTopFeaturesPerToken = 5, numTopFeaturesOverall = 20, initialRankingMetric = "
                                     feat.label.substring(0, 60),
                                     feat.label.length > 60 ? "..." : ""))))))));
                 })))),
-        React.createElement("div", { style: styles.tokenSequence }, tokens.map((token, index) => {
+        React.createElement("div", { style: styles.tokenSequence }, processedTokens.map((token, index) => {
             var _a, _b, _c, _d, _e;
             const isHovered = hoveredTokenIndex === index;
             const isClicked = isTokenSelected(index);
@@ -1601,6 +1607,8 @@ numTopFeaturesPerToken = 5, numTopFeaturesOverall = 20, initialRankingMetric = "
             const isMultiMax = isMultiMaximizeMode;
             let tokenStyle = { ...styles.token };
             let innerContent = token;
+            // Check for hook left arrow symbols
+            const hasHookLeftArrow = typeof token === "string" && /[↵]/.test(token);
             // --- Determine Background/Content based on Hover/Selection Priority --- //
             if (hoveredFeatureIndex !== null) {
                 // PRIORITY 1: Hovering over a feature - always show single color for hover target
@@ -1754,9 +1762,11 @@ numTopFeaturesPerToken = 5, numTopFeaturesOverall = 20, initialRankingMetric = "
             if (isClicked) {
                 tokenStyle = { ...tokenStyle, ...styles.tokenClicked };
             }
-            return (React.createElement("span", { key: index, style: tokenStyle, onMouseEnter: (e) => handleTokenMouseEnter(index, e), onMouseLeave: handleTokenMouseLeave, onClick: () => handleTokenClick(index), title: token.includes("\n") ? token.replace(/\n/g, "↵") : undefined }, typeof innerContent === "string"
-                ? innerContent.replace(/\n/g, "↵")
-                : innerContent));
+            return (React.createElement(React.Fragment, { key: index },
+                React.createElement("span", { style: tokenStyle, onMouseEnter: (e) => handleTokenMouseEnter(index, e), onMouseLeave: handleTokenMouseLeave, onClick: () => handleTokenClick(index), title: token.includes("\n") ? token.replace(/\n/g, "↵") : undefined }, typeof innerContent === "string"
+                    ? innerContent.replace(/\n/g, "↵")
+                    : innerContent),
+                hasHookLeftArrow && React.createElement("br", null)));
         })),
         hoverTokenTooltipData && (React.createElement("div", { style: {
                 ...styles.tooltip,
@@ -1767,7 +1777,7 @@ numTopFeaturesPerToken = 5, numTopFeaturesOverall = 20, initialRankingMetric = "
                 "Token ",
                 hoverTokenTooltipData.tokenIndex,
                 ": \"",
-                tokens[hoverTokenTooltipData.tokenIndex],
+                processedTokens[hoverTokenTooltipData.tokenIndex],
                 "\""),
             hoverTokenTooltipData.selectedFeatureValue !== null && (React.createElement("div", { style: {
                     marginTop: "5px",

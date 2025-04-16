@@ -2807,7 +2807,7 @@ Max: ${feature.maxActivation.toPrecision(
     const isMultiMax = isMultiMaximizeMode;
     let tokenStyle = { ...styles.token };
     let innerContent = token;
-    const hasHookRightArrow = typeof token === "string" && /[↵]/.test(token);
+    const hasHookLeftArrow = typeof token === "string" && /[↵]/.test(token);
     if (hoveredFeatureIndex !== null) {
       const hoveredArrayIndex = featureIdToArrayIndexMap.get(
         hoveredFeatureIndex != null ? hoveredFeatureIndex : -1
@@ -2969,7 +2969,7 @@ Max: ${feature.maxActivation.toPrecision(
         title: token.includes("\n") ? token.replace(/\n/g, "\u21B5") : void 0
       },
       typeof innerContent === "string" ? innerContent.replace(/\n/g, "\u21B5") : innerContent
-    ), hasHookRightArrow && /* @__PURE__ */ import_react13.default.createElement("br", null));
+    ), hasHookLeftArrow && /* @__PURE__ */ import_react13.default.createElement("br", null));
   })), hoverTokenTooltipData && /* @__PURE__ */ import_react13.default.createElement(
     "div",
     {
