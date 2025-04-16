@@ -1,0 +1,1 @@
+{"version":3,"file":"SampleItems.d.ts","sourceRoot":"","sources":["../../../src/shared/SampleItems.tsx"],"names":[],"mappings":";AAIA;;;;;GAKG;AACH,wBAAgB,WAAW,CAAC,EAC1B,eAAe,EACf,UAAU,EACV,QAAQ,EACR,QAAQ,EACT,EAAE;IACD,eAAe,EAAE,MAAM,EAAE,EAAE,GAAG,IAAI,CAAC;IACnC,UAAU,EAAE,MAAM,EAAE,EAAE,GAAG,IAAI,CAAC;IAC9B,QAAQ,CAAC,EAAE,MAAM,CAAC;IAClB,QAAQ,CAAC,EAAE,MAAM,CAAC;CACnB,eAwCA"}
