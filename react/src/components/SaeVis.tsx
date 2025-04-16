@@ -469,27 +469,28 @@ const getStyles = (
     tokenSequence: {
       display: "flex",
       flexWrap: "wrap",
-      gap: "0px",
+      gap: "0",
       lineHeight: 1.2,
       border: `1px solid ${theme.subtleBorder}`,
       padding: "5px",
       marginTop: "10px",
-      flexShrink: 0 // Prevent shrinking
+      flexShrink: 0, // Prevent shrinking
+      letterSpacing: "normal" // Default letter spacing for container
     },
     token: {
-      padding: "2px 0px",
-      margin: "0",
-      marginLeft: "-1px",
+      padding: "0",
+      margin: "-1px -1px 0 -1px", // Negative margin to pull tokens closer together
       borderRadius: "2px",
       cursor: "pointer",
-      whiteSpace: "pre-wrap",
+      whiteSpace: "pre", // Preserve spaces within tokens
       border: "1px solid transparent",
       transition: "outline 0.1s ease-in-out, background-color 0.1s ease-in-out",
-      letterSpacing: "0.5px",
+      letterSpacing: "0.08em", // Increased letter spacing for better readability
       display: "inline-block",
       position: "relative",
-      verticalAlign: "bottom",
-      lineHeight: 1.2
+      verticalAlign: "middle",
+      lineHeight: 1.2,
+      overflow: "visible"
     },
     tokenTextOverlay: {
       position: "absolute",
@@ -504,7 +505,8 @@ const getStyles = (
       zIndex: 1,
       pointerEvents: "none",
       width: "100%",
-      height: "100%"
+      height: "100%",
+      letterSpacing: "0.08em" // Match token letter spacing
     },
     tokenHover: {
       outline: `1px solid ${theme.hoverOutline}`,
@@ -2528,7 +2530,9 @@ export const SaeVis: React.FC<SaeVisProps> = ({
                 <span
                   style={{ ...styles.tokenTextOverlay, position: "relative" }}
                 >
-                  {token}
+                  {typeof token === "string"
+                    ? token.replace(/\n/g, " ") // Only replace newlines with spaces
+                    : token}
                 </span>
               </span>
             );
@@ -2638,8 +2642,13 @@ export const SaeVis: React.FC<SaeVisProps> = ({
               onMouseEnter={(e) => handleTokenMouseEnter(index, e)}
               onMouseLeave={handleTokenMouseLeave}
               onClick={() => handleTokenClick(index)}
+              title={
+                token.includes("\n") ? token.replace(/\n/g, "↵") : undefined
+              }
             >
-              {innerContent}
+              {typeof innerContent === "string"
+                ? innerContent.replace(/\n/g, " ") // Only replace newlines with spaces, keep original spacing
+                : innerContent}
             </span>
           );
         })}
