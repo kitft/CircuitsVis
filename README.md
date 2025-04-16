@@ -1,5 +1,33 @@
 # CircuitsVis
 
+A small extension to the original CircuitsVis library:
+
+
+#### `sae_vis`
+
+sae_vis`  interactively visualizes SAE feature activations on a text sequence. It is agnostic to the
+source of the features, and is simply run with an array of activations, a list of labels and a list
+of feature IDs.
+
+It shows tokens colored by activation strength and provides interactive exploration of features. You can
+select/pin tokens or features, hover over tokens/features to see details, view top activating tokens
+for each feature, and color tokens with multiple features simultaneously. A demonstration of its
+functionality can be found in `Demonstration.ipynb`.
+
+You can install this package via:
+
+`pip install git+https://github.com/kitft/CircuitsVis.git`
+
+It has `react` components, which should be pre-built. 
+
+If this fails, clone this directory and run `pip install .`; if the `react` components
+are not built correctly, navigate to `CircuitsVis/react` and run `yarn install` and `yarn build`.
+
+
+# Original Repo below
+
+
+
 [![Release](https://github.com/alan-cooney/CircuitsVis/actions/workflows/release.yml/badge.svg)](https://github.com/alan-cooney/CircuitsVis/actions/workflows/release.yml)
 [![NPMJS](https://img.shields.io/npm/v/circuitsvis)](https://www.npmjs.com/package/circuitsvis)
 [![Pypi](https://img.shields.io/pypi/v/circuitsvis)](https://pypi.org/project/circuitsvis/)
@@ -24,6 +52,8 @@ pip install circuitsvis
 ```bash
 yarn add circuitsvis
 ```
+
+
 
 ### Add visualizations
 
