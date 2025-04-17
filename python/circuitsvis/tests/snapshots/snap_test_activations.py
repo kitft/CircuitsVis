@@ -7,7 +7,8 @@ from snapshottest import Snapshot
 
 snapshots = Snapshot()
 
-snapshots['TestTextNeuronActivations.test_multi_matches_snapshot 1'] = '''<div id="circuits-vis-mock" style="margin: 15px 0;"/>
+snapshots['TestTextNeuronActivations.test_multi_matches_snapshot 1'] = '''<div style="overflow: visible; margin-bottom: 300px;">
+    <div id="circuits-vis-mock" style="margin: 15px 0; height: 900px; overflow: visible;"/>
     <script crossorigin type="module">
     import { render, TextNeuronActivations } from "https://unpkg.com/circuitsvis@0.0.0/dist/cdn/esm.js";
     render(
@@ -15,9 +16,11 @@ snapshots['TestTextNeuronActivations.test_multi_matches_snapshot 1'] = '''<div i
       TextNeuronActivations,
       {"tokens": [["a", "b"], ["c", "d", "e"]], "activations": [[[[0, 1, 0], [0, 1, 1]], [[0, 1, 1], [1, 1, 1]]], [[[0, 1, 0], [0, 1, 1]], [[0, 1, 1], [1, 1, 1]], [[0, 1, 1], [1, 1, 1]]]], "firstDimensionName": "Layer", "secondDimensionName": "Neuron"}
     )
-    </script>'''
+    </script>
+    </div>'''
 
-snapshots['TestTextNeuronActivations.test_single_matches_snapshot 1'] = '''<div id="circuits-vis-mock" style="margin: 15px 0;"/>
+snapshots['TestTextNeuronActivations.test_single_matches_snapshot 1'] = '''<div style="overflow: visible; margin-bottom: 300px;">
+    <div id="circuits-vis-mock" style="margin: 15px 0; height: 900px; overflow: visible;"/>
     <script crossorigin type="module">
     import { render, TextNeuronActivations } from "https://unpkg.com/circuitsvis@0.0.0/dist/cdn/esm.js";
     render(
@@ -25,4 +28,5 @@ snapshots['TestTextNeuronActivations.test_single_matches_snapshot 1'] = '''<div 
       TextNeuronActivations,
       {"tokens": ["a", "b"], "activations": [[[0, 1, 0], [0, 1, 1]], [[0, 1, 1], [1, 1, 1]]], "firstDimensionName": "Layer", "secondDimensionName": "Neuron"}
     )
-    </script>'''
+    </script>
+    </div>'''
