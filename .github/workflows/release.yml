@@ -93,6 +93,9 @@ jobs:
           python-version: "3.9" # Match your project's supported Python version
           cache: "poetry"
           cache-dependency-path: python/poetry.lock # Specify lock file path
+      - name: Install/Upgrade Setuptools
+        run: pip install --upgrade setuptools
+        working-directory: python # Ensure it runs in the python dir context if needed, though likely global
       - name: Install Python dependencies
         run: poetry install --with dev # Install dev deps if build script needs them
       - name: Set the version
