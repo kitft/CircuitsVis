@@ -72,21 +72,10 @@ jobs:
         with:
           # Checkout submodules (react) needed by build script
           submodules: "recursive"
-      - name: Set up Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: "3.9"
-      - name: Install compatible setuptools
-        run: pip install "setuptools<60"
       - name: Install Poetry
         uses: snok/install-poetry@v1
         with:
-          version: 1.4.0
-      - name: Add Poetry to PATH
-        run: |
-          echo "$HOME/.local/bin" >> $GITHUB_PATH
-      - name: Poetry config
-        run: poetry self add 'poethepoet[poetry_plugin]'
+          version: 1.4.0 # Use a specific version compatible with poethepoet plugin if necessary
       - name: Install Node.js (needed for pre_build hook)
         uses: actions/setup-node@v3
         with:
@@ -96,6 +85,17 @@ jobs:
       - name: Install React dependencies (needed for pre_build hook)
         run: yarn install --frozen-lockfile
         working-directory: react # Run yarn in the react directory
+      - name: Poetry config
+        run: poetry self add 'poethepoet[poetry_plugin]'
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.9" # Match your project's supported Python version
+          cache: "poetry"
+          cache-dependency-path: python/poetry.lock # Specify lock file path
+      - name: Install/Upgrade Setuptools
+        run: pip install --upgrade setuptools
+        working-directory: python # Ensure it runs in the python dir context if needed, though likely global
       - name: Install Python dependencies
         run: poetry install --with dev # Install dev deps if build script needs them
       - name: Set the version
@@ -122,11 +122,17 @@ jobs:
     # Disabled by default, but kept for potential future use
     if: false
     name: Publish docs to GitHub Pages
+    environment:
+      # Fixed environment syntax
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     needs:
       # Depends on the react release job, which is disabled
       # Keep the dependency, so if react-release is enabled, this might run
       - release-react
     runs-on: ubuntu-latest
+    env:
+      working-directory: react
     defaults:
       run:
         working-directory: react
