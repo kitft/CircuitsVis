@@ -72,10 +72,20 @@ jobs:
         with:
           # Checkout submodules (react) needed by build script
           submodules: "recursive"
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.9" # Match your project's supported Python version
+          cache: "poetry"
+          cache-dependency-path: python/poetry.lock # Specify lock file path
+      - name: Install compatible Setuptools for Base Python
+        run: pip install "setuptools<60" # Install into the base Python 3.9 before installing Poetry
       - name: Install Poetry
         uses: snok/install-poetry@v1
         with:
           version: 1.4.0 # Use a specific version compatible with poethepoet plugin if necessary
+      - name: Poetry config
+        run: poetry self add 'poethepoet[poetry_plugin]'
       - name: Install Node.js (needed for pre_build hook)
         uses: actions/setup-node@v3
         with:
@@ -85,17 +95,6 @@ jobs:
       - name: Install React dependencies (needed for pre_build hook)
         run: yarn install --frozen-lockfile
         working-directory: react # Run yarn in the react directory
-      - name: Poetry config
-        run: poetry self add 'poethepoet[poetry_plugin]'
-      - name: Set up Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: "3.9" # Match your project's supported Python version
-          cache: "poetry"
-          cache-dependency-path: python/poetry.lock # Specify lock file path
-      - name: Install/Upgrade Setuptools
-        run: pip install --upgrade setuptools
-        working-directory: python # Ensure it runs in the python dir context if needed, though likely global
       - name: Install Python dependencies
         run: poetry install --with dev # Install dev deps if build script needs them
       - name: Set the version
