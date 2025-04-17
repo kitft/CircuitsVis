@@ -43,11 +43,32 @@ View them all at [https://transformerlensorg.github.io/CircuitsVis](https://tran
 
 #### Python
 
+**Option 1: Install from GitHub Releases (Recommended for this fork)**
+
+This method uses the artifacts built by the GitHub Actions workflow upon creating a new release tag.
+
+```bash
+# Replace vX.Y.Z with the desired release tag (e.g., v0.1.0)
+# Find the correct wheel name in the release assets.
+uv pip install https://github.com/kitft/CircuitsVis/releases/download/vX.Y.Z/circuitsvis-X.Y.Z-py3-none-any.whl
+```
+
+Make sure to replace `vX.Y.Z` with the specific version you want to install and verify the wheel filename. You can find available releases and their assets [here](https://github.com/kitft/CircuitsVis/releases).
+The wheel file (`.whl`) contains the pre-built React components.
+
+**Option 2: Install from PyPI (Original Method - Currently Disabled in CI)**
+
+This package is also configured for PyPI deployment (though currently disabled in the default release workflow for this fork).
+
 ```bash
 pip install circuitsvis
 ```
 
 #### React
+
+**Original Method (Currently Disabled in CI)**
+
+The React component is also configured for npm deployment (though currently disabled in the default release workflow for this fork).
 
 ```bash
 yarn add circuitsvis
@@ -147,18 +168,13 @@ released to the latest production version of this library.
 
 #### Publishing a new release
 
-When a new GitHub release is created, the codebase will be automatically built
-and deployed to [PyPI](https://pypi.org/project/circuitsvis/).
+When a new GitHub release is created, the codebase will be automatically built.
+The default workflow for this fork uploads Python artifacts (`.whl`, `.tar.gz`) to the GitHub release.
+
+Publishing to PyPI and npm, and deploying Storybook to GitHub Pages are included in the workflow but disabled by default (`if: false`). They can be manually enabled if needed.
 
 ### Citation
 
 Please cite this library as:
 
-```BibTeX
-@misc{cooney2023circuitsvis,
-    title = {CircuitsVis},
-    author = {Alan Cooney and Neel Nanda},
-    year = {2023},
-    howpublished = {\url{https://github.com/TransformerLensOrg/CircuitsVis}},
-}
 ```
