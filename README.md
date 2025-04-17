@@ -14,19 +14,21 @@ select/pin tokens or features, hover over tokens/features to see details, view t
 for each feature, and color tokens with multiple features simultaneously. A demonstration of its
 functionality can be found in `Demonstration.ipynb`.
 
-You can install this package via:
+This method uses the artifacts built by the GitHub Actions workflow upon creating a new release tag.
 
-`pip install git+https://github.com/kitft/CircuitsVis.git`
+```bash
+# Replace vX.Y.Z with the desired release tag (e.g., v0.1.0)
+# Find the correct wheel name in the release assets.
+uv pip install https://github.com/kitft/CircuitsVis/releases/download/vX.Y.Z/circuitsvis-X.Y.Z-py3-none-any.whl
+```
 
-It has `react` components, which should be pre-built. 
+Make sure to replace `vX.Y.Z` with the specific version you want to install and verify the wheel filename. You can find available releases and their assets [here](https://github.com/kitft/CircuitsVis/releases).
+The wheel file (`.whl`) contains the pre-built React components. 
 
-If this fails, clone this directory and run `pip install .`; if the `react` components
-are not built correctly, navigate to `CircuitsVis/react` and run `yarn install` and `yarn build`.
-
-
-# Original Repo below
+To install for development, see below.
 
 
+#### Repo
 
 [![Release](https://github.com/alan-cooney/CircuitsVis/actions/workflows/release.yml/badge.svg)](https://github.com/alan-cooney/CircuitsVis/actions/workflows/release.yml)
 [![NPMJS](https://img.shields.io/npm/v/circuitsvis)](https://www.npmjs.com/package/circuitsvis)
