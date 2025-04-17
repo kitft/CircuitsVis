@@ -77,7 +77,8 @@ def sae_vis(
         if not feature_activations or not isinstance(feature_activations[0], list):
              raise TypeError("`feature_activations` as list must be a list of lists.")
         acts_shape = (len(feature_activations), len(feature_activations[0]) if feature_activations else 0)
-        activations_data = feature_activations
+        # Mypy gets confused by the union type and later conversion, safe to ignore.
+        activations_data = feature_activations # type: ignore [assignment]
     else:
         raise TypeError(
             "`feature_activations` must be a NumPy array, PyTorch tensor, or list of lists."

@@ -15,6 +15,7 @@ def attention_heads(
     negative_color: Optional[str] = None,
     positive_color: Optional[str] = None,
     mask_upper_tri: Optional[bool] = None,
+    height: Optional[Union[int, str]] = None,
 ) -> RenderedHTML:
     """Attention Heads
 
@@ -41,6 +42,7 @@ def attention_heads(
         mask_upper_tri: Whether or not to mask the upper triangular portion of
         the attention patterns. Should be true for causal attention, false for
         bidirectional attention.
+        height: Optional height for the container div.
 
     Returns:
         Html: Attention pattern visualization
@@ -58,6 +60,7 @@ def attention_heads(
 
     return render(
         "AttentionHeads",
+        height=height,
         **kwargs
     )
 
@@ -65,6 +68,7 @@ def attention_heads(
 def attention_patterns(
     tokens: List[str],
     attention: Union[list, np.ndarray, torch.Tensor],
+    height: Optional[Union[int, str]] = None,
 ) -> RenderedHTML:
     """Attention Patterns
 
@@ -76,12 +80,14 @@ def attention_patterns(
         tokens: List of tokens (e.g. `["A", "person"]`)
         attention: Attention tensor of the shape [num_heads x dest_tokens x
         src_tokens]
+        height: Optional height for the container div.
 
     Returns:
         Html: Attention patterns visualization
     """
     return render(
         "AttentionPatterns",
+        height=height,
         tokens=tokens,
         attention=attention,
     )
@@ -96,6 +102,7 @@ def attention_pattern(
     show_axis_labels: Optional[bool] = None,
     positive_color: Optional[str] = None,
     mask_upper_tri: Optional[bool] = None,
+    height: Optional[Union[int, str]] = None,
 ) -> RenderedHTML:
     """Attention Pattern
 
@@ -121,6 +128,7 @@ def attention_pattern(
         mask_upper_tri: Whether or not to mask the upper triangular portion of
         the attention patterns. Should be true for causal attention, false for
         bidirectional attention.
+        height: Optional height for the container div.
 
     Returns:
         Html: Attention pattern visualization
@@ -138,5 +146,6 @@ def attention_pattern(
 
     return render(
         "AttentionPattern",
+        height=height,
         **kwargs
     )

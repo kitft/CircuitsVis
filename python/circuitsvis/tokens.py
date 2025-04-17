@@ -18,6 +18,7 @@ def colored_tokens(
     max_value: Optional[float] = None,
     negative_color: Optional[str] = None,
     positive_color: Optional[str] = None,
+    height: Optional[Union[int, str]] = None,
 ) -> RenderedHTML:
     """Show tokens (colored by values) for each token in some text
 
@@ -28,6 +29,7 @@ def colored_tokens(
         max_value: Maximum value to use for color scale
         min_color: Color to use for minimum value
         max_color: Color to use for maximum value
+        height: Optional height for the container div.
 
     Returns:
         Html: Colored tokens visualization
@@ -43,6 +45,7 @@ def colored_tokens(
 
     return render(
         "ColoredTokens",
+        height=height,
         **kwargs
     )
 
@@ -51,6 +54,7 @@ def colored_tokens_multi(
     tokens: List[str],
     values: torch.Tensor,
     labels: Optional[List[str]] = None,
+    height: Optional[Union[int, str]] = None,
 ) -> RenderedHTML:
     """Shows a sequence of tokens colored by their value. 
 
@@ -67,6 +71,7 @@ def colored_tokens_multi(
         tokens: List of string tokens, one for each token in the prompt. Length [S]
         values: The tensor of values to color tokens by. Shape [S, K]
         labels: The names of the values. Length [K]. 
+        height: Optional height for the container div.
 
     Returns:
         Html: Log prob visualization
@@ -81,6 +86,7 @@ def colored_tokens_multi(
 
     return render(
         "ColoredTokensMulti",
+        height=height,
         tokens=tokens,
         values=values,
         labels=labels,
