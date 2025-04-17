@@ -64,8 +64,6 @@ jobs:
       - semver-parser
     # - release-react # No longer explicitly depends on the disabled react release
     runs-on: ubuntu-latest
-    env:
-      PATH: $HOME/.local/bin:$HOME/.poetry/bin:$PATH
     defaults:
       run:
         working-directory: python
@@ -77,15 +75,15 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: "3.9" # Match your project's supported Python version
-          cache: "poetry"
-          cache-dependency-path: python/poetry.lock # Specify lock file path
+          python-version: "3.9"
+      - name: Install distutils for Poetry plugin
+        run: sudo apt-get update && sudo apt-get install -y python3-distutils
       - name: Install compatible Setuptools for Base Python
         run: pip install "setuptools<60"
       - name: Install Poetry
         uses: snok/install-poetry@v1
         with:
-          version: 1.4.0 # Use a specific version compatible with poethepoet plugin if necessary
+          version: 1.4.0
       - name: Add Poetry to PATH
         run: echo "$HOME/.local/bin" >> $GITHUB_PATH
       - name: Poetry config
