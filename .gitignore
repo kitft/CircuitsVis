@@ -1,0 +1,21 @@
+# Distribution/packaging
+*.egg-info/
+.DS_Store
+.eggs/
+build/
+.build/
+#dist/ enable git-ting dist
+
+# Python
+__pycache__
+venv
+*-checkpoint.ipynb
+requirements.txt
+
+# Node
+node_modules/
+package-lock.json
+yarn-error.log
+.parcel-cache/
+storybook-static/
+build-storybook.log

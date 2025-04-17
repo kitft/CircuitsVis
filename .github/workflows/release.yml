@@ -1,0 +1,160 @@
+name: Release
+
+on:
+  release:
+    types:
+      - published
+
+jobs:
+  checks:
+    name: Run checks workflow
+    uses: TransformerLensOrg/CircuitsVis/.github/workflows/checks.yml@main
+
+  semver-parser:
+    name: Parse the semantic version from the release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Parse semver string
+        id: semver_parser
+        uses: booxmedialtd/ws-action-parse-semver@v1.4.7
+        with:
+          input_string: ${{ github.event.release.tag_name }}
+    outputs:
+      major: "${{ steps.semver_parser.outputs.major }}"
+      minor: "${{ steps.semver_parser.outputs.minor }}"
+      patch: "${{ steps.semver_parser.outputs.patch }}"
+      semver: "${{ steps.semver_parser.outputs.fullversion }}"
+
+  release-react:
+    # Disabled by default, but kept for potential future use
+    if: false
+    name: Release React Node JS package to NPMJS
+    needs:
+      - checks
+      - semver-parser
+    runs-on: ubuntu-latest
+    permissions:
+      actions: write
+      contents: write
+    env:
+      working-directory: react
+    defaults:
+      run:
+        working-directory: react
+    steps:
+      - uses: actions/checkout@v3
+      - name: Install dependencies
+        run: yarn
+      - name: Build
+        run: yarn build
+      - name: Set the version
+        run: yarn version --new-version ${{needs.semver-parser.outputs.semver}} --no-git-tag-version --no-commit-hooks
+      - name: Publish to NPMJS
+        id: publish
+        uses: JS-DevTools/npm-publish@v1
+        with:
+          token: ${{ secrets.NPM_TOKEN }}
+          package: ${{env.working-directory}}/package.json
+          check-version: true
+
+  release-python:
+    name: Build Python package and Upload to GitHub Releases
+    needs:
+      - checks
+      - semver-parser
+    # - release-react # No longer explicitly depends on the disabled react release
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: python
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          # Checkout submodules (react) needed by build script
+          submodules: "recursive"
+      - name: Install Poetry
+        uses: snok/install-poetry@v1
+        with:
+          version: 1.4.0 # Use a specific version compatible with poethepoet plugin if necessary
+      - name: Install Node.js (needed for pre_build hook)
+        uses: actions/setup-node@v3
+        with:
+          node-version: "18" # Or the version required by your React build
+          cache: "yarn"
+          cache-dependency-path: react/yarn.lock # Adjust path if needed
+      - name: Install React dependencies (needed for pre_build hook)
+        run: yarn install --frozen-lockfile
+        working-directory: react # Run yarn in the react directory
+      - name: Poetry config
+        run: poetry self add 'poethepoet[poetry_plugin]'
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.9" # Match your project's supported Python version
+          cache: "poetry"
+          cache-dependency-path: python/poetry.lock # Specify lock file path
+      - name: Install Python dependencies
+        run: poetry install --with dev # Install dev deps if build script needs them
+      - name: Set the version
+        run: poetry version ${{needs.semver-parser.outputs.semver}}
+      - name: Build Python package (sdist and wheel)
+        # This will trigger the 'pre_build' hook ('bundle-js')
+        run: poetry build
+      - name: Publish to PyPI (Disabled by default)
+        # Disabled by default, but kept for potential future use
+        if: false
+        run: poetry publish
+        env:
+          POETRY_PYPI_TOKEN_PYPI: ${{ secrets.POETRY_PYPI_TOKEN_PYPI }}
+      - name: Upload Python artifacts to GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            python/dist/*.tar.gz
+            python/dist/*.whl
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  publish-storybook:
+    # Disabled by default, but kept for potential future use
+    if: false
+    name: Publish docs to GitHub Pages
+    environment:
+      # Fixed environment syntax
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    needs:
+      # Depends on the react release job, which is disabled
+      # Keep the dependency, so if react-release is enabled, this might run
+      - release-react
+    runs-on: ubuntu-latest
+    env:
+      working-directory: react
+    defaults:
+      run:
+        working-directory: react
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Setup Pages
+        uses: actions/configure-pages@v2
+      # Redundant checkout, removing
+      # - uses: actions/checkout@v3
+      - name: Install dependencies
+        run: yarn
+      - name: Build
+        run: yarn build
+      - name: Build storybook
+        run: yarn build-storybook
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v1
+        with:
+          # Upload storybook build
+          path: "react/storybook-static"
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v1
