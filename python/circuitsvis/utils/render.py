@@ -24,15 +24,13 @@ def is_in_dev_mode(dir_to_check: Path = REACT_DIR) -> bool:
 
 def internet_on() -> bool:
     """Detect if we're online"""
-    print("rendering offline")# decouple from cdn step
-    return False
-    # try:
-    #     request.urlopen("http://google.com", timeout=1)
-    #     return True
-    # except:
-    #     pass
+    try:
+        request.urlopen("http://google.com", timeout=1)
+        return True
+    except:
+        pass
 
-    # return False
+    return False
 
 
 class RenderedHTML:
@@ -60,9 +58,10 @@ class RenderedHTML:
         # Use local source if we're offline
         if not internet_on():
             return self.local_src
-
-        # Otherwise use the CDN
-        return self.cdn_src
+        print("rendering offline always - # render.py")# modify to always render offline
+        return self.local_src
+        ## Otherwise use the CDN
+        ##return self.cdn_src
 
     def __html__(self) -> str:
         """Used by some tooling as an alternative to _repr_html_"""
