@@ -27,6 +27,8 @@ The wheel file (`.whl`) contains the pre-built React components.
 
 To install for development, see below.
 
+*nb - this repo deactivates `render_cdn` in `python/utils/render.py`.
+
 
 #### Repo
 

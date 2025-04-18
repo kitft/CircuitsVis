@@ -24,13 +24,15 @@ def is_in_dev_mode(dir_to_check: Path = REACT_DIR) -> bool:
 
 def internet_on() -> bool:
     """Detect if we're online"""
-    try:
-        request.urlopen("http://google.com", timeout=1)
-        return True
-    except:
-        pass
-
+    print("rendering offline")# decouple from cdn step
     return False
+    # try:
+    #     request.urlopen("http://google.com", timeout=1)
+    #     return True
+    # except:
+    #     pass
+
+    # return False
 
 
 class RenderedHTML:
